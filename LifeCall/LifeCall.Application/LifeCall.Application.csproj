@@ -11,4 +11,9 @@
     <PackageReference Include="MediatR" Version="12.4.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\LifeCall.Domain\LifeCall.Domain.csproj" />
+    <ProjectReference Include="..\LifeCall.Infrastructure\LifeCall.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
