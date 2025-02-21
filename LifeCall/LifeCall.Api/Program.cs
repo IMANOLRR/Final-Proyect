@@ -24,7 +24,3 @@ app.MapControllers();
 
 app.Run();
 
-builder.Services.AddDbContext<LifeCallDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddScoped<EmergencyService>();
