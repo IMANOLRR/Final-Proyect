@@ -1,6 +1,0 @@
-@LifeCall.Api_HostAddress = http://localhost:5249
-
-GET {{LifeCall.Api_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

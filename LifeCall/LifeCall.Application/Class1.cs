@@ -1,6 +1,0 @@
-﻿
-
-namespace LifeCall.Application.Services
-{
-    
-}
