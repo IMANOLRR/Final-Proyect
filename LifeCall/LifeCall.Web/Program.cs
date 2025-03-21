@@ -1,7 +1,16 @@
+using Microsoft.EntityFrameworkCore;
+using LifeCall.Infrastructure;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+ConfigureServices(builder);
 
 var app = builder.Build();
 
@@ -25,3 +34,10 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+void ConfigureServices(WebApplicationBuilder builder)
+{
+    // Configurar el contexto de base de datos
+    builder.Services.AddDbContext<LifeCallDbContext>(options =>
+        options.UseMySQL("server=localhost;database=LifeCall;user=root;password=admin"));
+}
