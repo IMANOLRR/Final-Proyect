@@ -1,0 +1,16 @@
+﻿@model LifeCall.Domain.EmergencyReport
+
+<h1>Eliminar Reporte</h1>
+<p>¿Estás seguro de que deseas eliminar este reporte?</p>
+
+<div>
+    <p><strong>Nombre del Llamador:</strong> @Model.CallerName</p>
+    <p><strong>Descripción:</strong> @Model.Description</p>
+    <p><strong>Estado:</strong> @Model.Status</p>
+</div>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a asp-action="Reports" class="btn btn-secondary">Cancelar</a>
+</form>
