@@ -11,7 +11,7 @@
 <h1>Reportes de Emergencia</h1>
 
 <div class="container">
-    <form asp-action="Create" method="post" class="mb-4">
+    <form asp-controller="EmergencyReport" asp-action="Create" method="post" class="mb-4">
         <div class="form-group">
             <label for="CallerName">Nombre del Llamador</label>
             <input type="text" id="CallerName" name="CallerName" class="form-control" required>
