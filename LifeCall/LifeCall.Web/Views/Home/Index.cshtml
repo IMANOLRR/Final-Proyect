@@ -2,44 +2,36 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-@model IEnumerable<EmergencyReport>
+@model IEnumerable<LifeCall.Domain.EmergencyReport>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-</div>
+@{
+    ViewData["Title"] = "Reportes de Emergencia";
+}
+
+<h1>Reportes de Emergencia</h1>
 
 <div class="container">
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Fecha</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-        @if (Model != null && Model.Any())
-        {
-            foreach (var report in Model)
-            {
-                <tr>
-                    <td>@report.Id</td>
-                    <td>@report.CallerName</td>
-                    <td>@report.Description</td>
-                    <td>@report.DateReport</td>
-                    <td>@report.Status</td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@report.Id">Editar</a>
-                        <a asp-action="Delete" asp-route-id="@report.Id">Eliminar</a>
-                    </td>
-                </tr>
-            }
-        }
-        else
-        {
-            <tr>
-                <td colspan="4">No hay reportes disponibles.</td>
-            </tr>
-        }
-    </table>
+    <form asp-action="Create" method="post" class="mb-4">
+        <div class="form-group">
+            <label for="CallerName">Nombre del Llamador</label>
+            <input type="text" id="CallerName" name="CallerName" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="Description">Descripción</label>
+            <textarea id="Description" name="Description" class="form-control" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="DateReport">Fecha del Reporte</label>
+            <input type="date" id="DateReport" name="DateReport" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="Status">Estado</label>
+            <select id="Status" name="Status" class="form-control" required>
+                <option value="En proceso">En proceso</option>
+                <option value="Completado">Completado</option>
+                <option value="Pendiente">Pendiente</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Agregar Reporte</button>
+    </form>
 </div>

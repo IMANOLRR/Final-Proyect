@@ -14,7 +14,7 @@ namespace LifeCall.Web.Controllers
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Reports()
         {
            var reports = await _context.EmergencyReports.ToListAsync();
             return View(reports);
@@ -29,14 +29,19 @@ namespace LifeCall.Web.Controllers
             {
                 _context.Add(report);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Reports));
             }
             return View(report);
         }
 
-        //public IActionResult Index()
-        //{
-        //    return View();
-        //}
+        public async Task<IActionResult> Edit(int id)
+        {
+            var report = await _context.EmergencyReports.FindAsync(id);
+            if (report == null)
+            {
+                return NotFound();
+            }
+            return View(report);
+        }
     }
 }
