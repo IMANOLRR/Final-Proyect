@@ -3,19 +3,27 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Agregar servicios al contenedor
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<LifeCallDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddControllers();
+    options.UseMySQL("server=localhost;database=LifeCall;user=root;password=admin"));
 
-builder.Services.AddControllers();
+
+
 
 var app = builder.Build();
 
-app.UseRouting();
-
-app.UseEndpoints(endpoints =>
+// Configurar el pipeline de HTTP
+if (app.Environment.IsDevelopment())
 {
-    endpoints.MapControllers();
-});
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
 
 app.Run();

@@ -7,16 +7,21 @@ namespace LifeCall.Web.Controllers
 {
     public class EmergencyReportController : Controller
     {
-        private readonly LifeCallDbContext _context;
+        private readonly HttpClient _httpClient;
+        private readonly string _apiUrl = "http://localhost:5043/api/EmergencyReportApi";
 
-        public EmergencyReportController(LifeCallDbContext context)
+        public EmergencyReportController(HttpClient httpClient)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         public async Task<IActionResult> Reports()
         {
-            var reports = await _context.EmergencyReports.ToListAsync();
+            var response = await _httpClient.GetAsync(_apiUrl);
+            if (!response.IsSuccessStatusCode)
+            {
+                return View(new List<EmergencyReport>());
+            }
+            var reports = await response.Content.ReadFromJsonAsync<List<EmergencyReport>>();
             return View(reports);
         }
 
@@ -30,23 +35,18 @@ namespace LifeCall.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(EmergencyReport report)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.EmergencyReports.Add(report);
-                await _context.SaveChangesAsync();
+                return View(report);
+            }
+
+            var response = await _httpClient.PostAsJsonAsync(_apiUrl, report);
+
+            if (response.IsSuccessStatusCode)
+            {
                 return RedirectToAction(nameof(Reports));
             }
-            return View(report);
-        }
 
-        [HttpGet]
-        public async Task<IActionResult> Edit(int id)
-        {
-            var report = await _context.EmergencyReports.FindAsync(id);
-            if (report == null)
-            {
-                return NotFound();
-            }
             return View(report);
         }
 
@@ -54,60 +54,30 @@ namespace LifeCall.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, EmergencyReport report)
         {
-            if (id != report.Id)
+            if (id != report.Id || !ModelState.IsValid)
             {
-                return NotFound();
+                return View(report);
             }
 
-            if (ModelState.IsValid)
+            var response = await _httpClient.PutAsJsonAsync($"{_apiUrl}/{id}", report);
+            if (response.IsSuccessStatusCode)
             {
-                try
-                {
-                    _context.Update(report);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Reports));
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!_context.EmergencyReports.Any(e => e.Id == report.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                return RedirectToAction(nameof(Reports));
             }
+
             return View(report);
         }
 
-        [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
-            var report = await _context.EmergencyReports.FindAsync(id);
-            if (report == null)
-            {
-                return NotFound();
-            }
-            return View(report);
-        }
+            var response = await _httpClient.DeleteAsync($"{_apiUrl}/{id}");
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var report = await _context.EmergencyReports.FindAsync(id);
-            if (report == null)
+            if (response.IsSuccessStatusCode)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Reports));
             }
 
-            _context.EmergencyReports.Remove(report);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Reports));
+            return View("Error");
         }
-
     }
 }
