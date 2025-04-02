@@ -32,14 +32,22 @@ namespace LifeCall.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(EmergencyReport report)
+        public async Task<IActionResult> Create([FromBody] EmergencyReport report)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            _context.EmergencyReports.Add(report);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new { id = report.Id }, report);
+            try
+            {
+                _context.EmergencyReports.Add(report);
+                await _context.SaveChangesAsync();
+                return CreatedAtAction(nameof(GetById), new { id = report.Id }, report);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error en el servidor: {ex.Message}");
+            }
         }
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, EmergencyReport report)
