@@ -12,6 +12,7 @@ namespace LifeCall.Web.Controllers
 
         public EmergencyReportController(HttpClient httpClient)
         {
+            _httpClient = httpClient;
         }
 
         public async Task<IActionResult> Reports()
