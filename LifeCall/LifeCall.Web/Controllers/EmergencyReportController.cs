@@ -8,7 +8,9 @@ namespace LifeCall.Web.Controllers
     public class EmergencyReportController : Controller
     {
         private readonly HttpClient _httpClient;
-        private readonly string _apiUrl = "http://localhost:5043/api/EmergencyReportApi";
+        private readonly string _apiUrl = "https://localhost:44380/api/EmergencyReport";
+
+
 
         public EmergencyReportController(HttpClient httpClient)
         {
