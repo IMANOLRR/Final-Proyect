@@ -9,13 +9,15 @@ namespace LifeCall.Web.Controllers
     {
         private readonly HttpClient _httpClient;
         private readonly string _apiUrl = "https://localhost:44380/api/EmergencyReport";
+        private readonly LifeCallDbContext _context;
 
 
-
-        public EmergencyReportController(HttpClient httpClient)
+        public EmergencyReportController(HttpClient httpClient, LifeCallDbContext context)
         {
             _httpClient = httpClient;
+            _context = context;
         }
+
 
         public async Task<IActionResult> Reports()
         {
@@ -53,22 +55,42 @@ namespace LifeCall.Web.Controllers
             return View(report);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var report = await _context.EmergencyReports.FindAsync(id);
+            if (report == null)
+            {
+                return NotFound();
+            }
+
+            return View(report);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, EmergencyReport report)
+        public async Task<IActionResult> Edit(EmergencyReport report)
         {
-            if (id != report.Id || !ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View(report);
             }
 
-            var response = await _httpClient.PutAsJsonAsync($"{_apiUrl}/{id}", report);
-            if (response.IsSuccessStatusCode)
+            _context.Entry(report).State = EntityState.Modified;
+
+            try
             {
-                return RedirectToAction(nameof(Reports));
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.EmergencyReports.Any(e => e.Id == report.Id))
+                    return NotFound();
+
+                throw;
             }
 
-            return View(report);
+            return RedirectToAction(nameof(Reports));
         }
 
         public async Task<IActionResult> Delete(int id)
@@ -77,10 +99,13 @@ namespace LifeCall.Web.Controllers
 
             if (response.IsSuccessStatusCode)
             {
+                TempData["SuccessMessage"] = "El reporte fue eliminado exitosamente.";
                 return RedirectToAction(nameof(Reports));
             }
 
-            return View("Error");
+            TempData["ErrorMessage"] = "Ocurrió un error al intentar eliminar el reporte.";
+            return RedirectToAction(nameof(Reports));
         }
+
     }
 }

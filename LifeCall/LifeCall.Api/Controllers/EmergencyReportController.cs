@@ -48,13 +48,25 @@ namespace LifeCall.Api.Controllers
             }
         }
 
-
+        
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, EmergencyReport report)
         {
-            if (id != report.Id) return BadRequest();
+            if (id != report.Id)
+            {
+                return BadRequest(new { message = "El ID proporcionado no coincide con el ID del reporte." });
+            }
 
-            _context.Entry(report).State = EntityState.Modified;
+            var existingReport = await _context.EmergencyReports.FindAsync(id);
+            if (existingReport == null)
+            {
+                return NotFound(new { message = "El reporte no fue encontrado." });
+            }
+
+            existingReport.CallerName = report.CallerName;
+            existingReport.Description = report.Description;
+            existingReport.DateReport = report.DateReport;
+            existingReport.Status = report.Status;
 
             try
             {
@@ -62,25 +74,29 @@ namespace LifeCall.Api.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_context.EmergencyReports.Any(e => e.Id == id))
-                    return NotFound();
-
-                throw;
+                return Conflict(new { message = "Hubo un conflicto al intentar guardar los cambios. Inténtalo nuevamente." });
             }
 
-            return NoContent();
+            return Ok(new { message = "El reporte fue actualizado exitosamente." });
         }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var report = await _context.EmergencyReports.FindAsync(id);
-            if (report == null) return NotFound();
+            if (report == null)
+            {
+                return NotFound(new { message = "El reporte no existe o ya fue eliminado." });
+            }
 
             _context.EmergencyReports.Remove(report);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new { message = "El reporte fue eliminado exitosamente." });
         }
+
+
+
     }
 }

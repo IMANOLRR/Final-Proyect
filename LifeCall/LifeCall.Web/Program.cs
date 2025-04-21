@@ -8,7 +8,6 @@ using LifeCall.Web.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient<EmergencyReportController>();
 
@@ -18,7 +17,6 @@ ConfigureServices(builder);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -41,7 +39,6 @@ app.Run();
 
 void ConfigureServices(WebApplicationBuilder builder)
 {
-    // Configurar el contexto de base de datos
     builder.Services.AddDbContext<LifeCallDbContext>(options =>
         options.UseMySQL("server=localhost;database=LifeCall;user=root;password=admin"));
 }
