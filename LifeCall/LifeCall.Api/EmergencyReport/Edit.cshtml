@@ -1,0 +1,33 @@
+﻿
+@model LifeCall.Domain.EmergencyReport
+
+<h2>Editar Reporte de Emergencia</h2>
+
+<form asp-action="Edit" method="post">
+    <div class="form-group">
+        <input type="hidden" asp-for="Id" />
+    </div>
+    <div class="form-group">
+        <label asp-for="CallerName"></label>
+        <input asp-for="CallerName" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <input asp-for="Description" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Status"></label>
+        <select asp-for="Status" class="form-control">
+            <option value="En proceso">En proceso</option>
+            <option value="Completado">Completado</option>
+            <option value="Pendiente">Pendiente</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="DateReport"></label>
+        <input asp-for="DateReport" class="form-control" type="date" />
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
+
