@@ -1,0 +1,33 @@
+﻿@model LifeCall.Domain.UnitAssignment
+
+@{
+    ViewData["Title"] = "Asignar Unidad";
+}
+
+<h1>Asignar Unidad</h1>
+
+<form asp-action="Assign" asp-controller="Unit" method="post">
+    <div>
+        <label for="EmergencyReportId">ID del Reporte de Emergencia:</label>
+        <input type="text" id="EmergencyReportId" name="EmergencyReportId"
+               value="@Model.EmergencyReportId" readonly class="form-control" />
+    </div>
+
+    <div>
+        <label for="UnitId">Selecciona una Unidad:</label>
+        <select id="UnitId" name="UnitId" class="form-control">
+            <option value="" disabled selected>Selecciona una unidad</option>
+            @foreach (var unit in ViewBag.Units as List<SelectListItem>)
+            {
+                <option value="@unit.Value">@unit.Text</option>
+            }
+        </select>
+    </div>
+
+    <div>
+        <label for="Notes">Notas:</label>
+        <textarea id="Notes" name="Notes" class="form-control" rows="3"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Asignar Unidad</button>
+</form>

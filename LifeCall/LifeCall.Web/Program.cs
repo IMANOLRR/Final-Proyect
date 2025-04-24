@@ -35,6 +35,11 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.UseCors(builder =>
+    builder.AllowAnyOrigin()
+           .AllowAnyMethod()
+           .AllowAnyHeader());
+
 app.Run();
 
 void ConfigureServices(WebApplicationBuilder builder)

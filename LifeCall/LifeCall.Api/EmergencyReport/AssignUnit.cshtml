@@ -1,0 +1,23 @@
+﻿@model LifeCall.Domain.UnitAssignment
+@using LifeCall.Domain
+
+@{
+    ViewData["Title"] = "Asignar Unidad";
+}
+
+<h2>Asignar Unidad</h2>
+
+@if (!string.IsNullOrEmpty(TempData["SuccessMessage"] as string))
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+<form asp-action="Assign" method="post">
+    <input type="hidden" asp-for="EmergencyReportId" />
+    <div class="form-group">
+        <label for="UnitId">Unidad</label>
+        <select asp-for="UnitId" class="form-control" asp-items="ViewBag.Units"></select>
+    </div>
+    <button type="submit" class="btn btn-primary">Asignar</button>
+</form>
+

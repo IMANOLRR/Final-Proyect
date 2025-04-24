@@ -16,87 +16,118 @@ namespace LifeCall.Api.Controllers
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
+        // Obtener todos los reportes
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var reports = await _context.EmergencyReports.ToListAsync();
-            return Ok(reports);
+            try
+            {
+                var reports = await _context.EmergencyReports.ToListAsync();
+                return Ok(reports);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error al obtener los reportes.", error = ex.Message });
+            }
         }
 
-        [HttpGet("{id}")]
+        // Obtener reporte por ID
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var report = await _context.EmergencyReports.FindAsync(id);
-            if (report == null) return NotFound();
-            return Ok(report);
+            try
+            {
+                var report = await _context.EmergencyReports.FindAsync(id);
+                if (report == null)
+                {
+                    return NotFound(new { message = $"Reporte con ID {id} no encontrado." });
+                }
+                return Ok(report);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error al buscar el reporte.", error = ex.Message });
+            }
         }
 
+        // Crear un nuevo reporte
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] EmergencyReport report)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { message = "Datos inválidos.", errors = ModelState.Values });
+            }
 
             try
             {
-                _context.EmergencyReports.Add(report);
+                await _context.EmergencyReports.AddAsync(report);
                 await _context.SaveChangesAsync();
                 return CreatedAtAction(nameof(GetById), new { id = report.Id }, report);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error en el servidor: {ex.Message}");
+                return StatusCode(500, new { message = "Error al crear el reporte.", error = ex.Message });
             }
         }
 
-        
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, EmergencyReport report)
+        // Actualizar un reporte existente
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Update(int id, [FromBody] EmergencyReport report)
         {
             if (id != report.Id)
             {
                 return BadRequest(new { message = "El ID proporcionado no coincide con el ID del reporte." });
             }
 
-            var existingReport = await _context.EmergencyReports.FindAsync(id);
-            if (existingReport == null)
-            {
-                return NotFound(new { message = "El reporte no fue encontrado." });
-            }
-
-            existingReport.CallerName = report.CallerName;
-            existingReport.Description = report.Description;
-            existingReport.DateReport = report.DateReport;
-            existingReport.Status = report.Status;
-
             try
             {
+                var existingReport = await _context.EmergencyReports.FindAsync(id);
+                if (existingReport == null)
+                {
+                    return NotFound(new { message = $"Reporte con ID {id} no encontrado." });
+                }
+
+                // Actualizar campos
+                existingReport.CallerName = report.CallerName;
+                existingReport.Description = report.Description;
+                existingReport.DateReport = report.DateReport;
+                existingReport.Status = report.Status;
+
                 await _context.SaveChangesAsync();
+                return Ok(new { message = "Reporte actualizado exitosamente.", report = existingReport });
             }
             catch (DbUpdateConcurrencyException)
             {
-                return Conflict(new { message = "Hubo un conflicto al intentar guardar los cambios. Inténtalo nuevamente." });
+                return Conflict(new { message = "Conflicto al guardar los cambios. Intenta nuevamente." });
             }
-
-            return Ok(new { message = "El reporte fue actualizado exitosamente." });
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error al actualizar el reporte.", error = ex.Message });
+            }
         }
 
-
-        [HttpDelete("{id}")]
+        // Eliminar un reporte
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var report = await _context.EmergencyReports.FindAsync(id);
-            if (report == null)
+            try
             {
-                return NotFound(new { message = "El reporte no existe o ya fue eliminado." });
+                var report = await _context.EmergencyReports.FindAsync(id);
+                if (report == null)
+                {
+                    return NotFound(new { message = $"Reporte con ID {id} no encontrado o ya fue eliminado." });
+                }
+
+                _context.EmergencyReports.Remove(report);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Reporte eliminado exitosamente." });
             }
-
-            _context.EmergencyReports.Remove(report);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { message = "El reporte fue eliminado exitosamente." });
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error al eliminar el reporte.", error = ex.Message });
+            }
         }
-
-
-
     }
 }
