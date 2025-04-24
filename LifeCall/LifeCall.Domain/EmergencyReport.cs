@@ -21,15 +21,16 @@ namespace LifeCall.Domain
         public string Name { get; set; }
         public string Type { get; set; }
     }
+
     public class UnitAssignment
     {
-        public int Id { get; set; }
-        public int EmergencyReportId { get; set; }
-        public int UnitId { get; set; }
-        public DateTime AssignmentDate { get; set; }
+        public int Id { get; set; } 
+        public int EmergencyReportId { get; set; } 
+        public int UnitId { get; set; } 
+        public string Notes { get; set; } 
 
-        public EmergencyReport EmergencyReport { get; set; }
-        public Unit Unit { get; set; }
+ 
+        public virtual EmergencyReport EmergencyReport { get; set; }
+        public virtual Unit Unit { get; set; }
     }
-
 }

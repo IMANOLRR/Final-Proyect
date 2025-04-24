@@ -22,7 +22,7 @@ namespace LifeCall.Infrastructure
         {
             modelBuilder.Entity<UnitAssignment>()
                 .HasOne(ua => ua.EmergencyReport)
-                .WithMany(r => r.UnitAssignments)
+                .WithMany(er => er.UnitAssignments)
                 .HasForeignKey(ua => ua.EmergencyReportId);
 
             modelBuilder.Entity<UnitAssignment>()
