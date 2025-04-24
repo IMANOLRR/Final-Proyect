@@ -12,9 +12,23 @@ namespace LifeCall.Infrastructure
     {
         public LifeCallDbContext(DbContextOptions<LifeCallDbContext> options) : base(options) 
         {
-            Database.OpenConnection();
-            Database.CloseConnection();
+
         }
         public DbSet<EmergencyReport> EmergencyReports { get; set; }
+        public DbSet<Unit> Units { get; set; }
+        public DbSet<UnitAssignment> UnitAssignments { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UnitAssignment>()
+                .HasOne(ua => ua.EmergencyReport)
+                .WithMany(er => er.UnitAssignments)
+                .HasForeignKey(ua => ua.EmergencyReportId);
+
+            modelBuilder.Entity<UnitAssignment>()
+                .HasOne(ua => ua.Unit)
+                .WithMany()
+                .HasForeignKey(ua => ua.UnitId);
+        }
     }
 }

@@ -1,13 +1,28 @@
 ﻿@using LifeCall.Domain;
 @{
-    ViewData["Title"] = "Reports";
+    var successMessage = TempData["SuccessMessage"] as string;
+    var errorMessage = TempData["ErrorMessage"] as string;
 }
-<h1>@ViewData["Title"]</h1>
+<h1>Reportes</h1>
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success">
+        @successMessage
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">
+        @errorMessage
+    </div>
+}
 
 @model IEnumerable<EmergencyReport>
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
+
 </div>
 
 <div class="container">
@@ -33,6 +48,8 @@
                     <td>
                         <a asp-action="Edit" asp-route-id="@report.Id">Editar</a>
                         <a asp-action="Delete" asp-route-id="@report.Id" class="text-danger">Eliminar</a>
+                        <a asp-controller="Unit" asp-action="AssignUnitView" asp-route-id="@report.Id" class="btn btn-secondary">Asignar Unidad</a>
+
                     </td>
                 </tr>
             }
